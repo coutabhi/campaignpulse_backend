@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# SQLite
+db.sqlite3
+
+# Environment
+.env
+venv/
+.env.local
+
+# Mac/Windows junk
+.DS_Store
+Thumbs.db
+
+# Static files
+staticfiles/
+
+# IDE
+.vscode/
+.idea/

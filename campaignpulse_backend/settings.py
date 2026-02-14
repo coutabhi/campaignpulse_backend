@@ -1,24 +1,23 @@
+import os
+from pathlib import Path
 import dj_database_url
 
-from pathlib import Path
+# -------------------------------------------------
+# BASE CONFIG
+# -------------------------------------------------
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v(3u-f-jpxn0$f9pir@(!n!98@^@j))-zp=6&$b7%9totf3b3x'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # tighten later for production
 
 
-# Application definition
+# -------------------------------------------------
+# APPLICATIONS
+# -------------------------------------------------
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,10 +26,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
-    'campaigns',
     'corsheaders',
+    'campaigns',
 ]
+
+
+# -------------------------------------------------
+# MIDDLEWARE
+# -------------------------------------------------
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -42,6 +47,22 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+# -------------------------------------------------
+# CORS
+# -------------------------------------------------
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+# -------------------------------------------------
+# URL CONFIG
+# -------------------------------------------------
 
 ROOT_URLCONF = 'campaignpulse_backend.urls'
 
@@ -60,57 +81,57 @@ TEMPLATES = [
     },
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
-
 WSGI_APPLICATION = 'campaignpulse_backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# -------------------------------------------------
+# DATABASE
+# -------------------------------------------------
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgresql://postgres:Edme5C3xZL0BqCgx@db.ssywmhvtusnbkhcxawfe.supabase.co:5432/postgres",
+        default=os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=not DEBUG
     )
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+# -------------------------------------------------
+# PASSWORD VALIDATION
+# -------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
+# -------------------------------------------------
+# INTERNATIONALIZATION
+# -------------------------------------------------
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+# -------------------------------------------------
+# STATIC FILES
+# -------------------------------------------------
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+# -------------------------------------------------
+# REST FRAMEWORK (Cursor Pagination Default)
+# -------------------------------------------------
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.CursorPagination",
+    "PAGE_SIZE": 10,
+}
