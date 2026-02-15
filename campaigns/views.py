@@ -10,13 +10,8 @@ class CampaignViewSet(ModelViewSet):
     serializer_class = CampaignSerializer
     pagination_class = CampaignCursorPagination
 
-    def perform_destroy(self, instance):
-        if instance.status != "Draft":
-            raise PermissionDenied("Only Draft campaigns can be deleted")
-        instance.delete()
-
     def perform_update(self, serializer):
         instance = serializer.instance
-        if instance.status == "Completed":
+        if instance.status == "published":
             raise PermissionDenied("Completed campaigns cannot be edited")
         serializer.save()

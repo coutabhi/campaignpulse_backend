@@ -10,26 +10,29 @@ class Campaign(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('Paused', 'Paused'),
-        ('Completed', 'Completed'),
-        ('Draft', 'Draft'),
+        ('draft', 'draft'),
+        ('scheduled', 'scheduled'),
+        ('published', 'published'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
 
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
 
-    budget = models.DecimalField(max_digits=12, decimal_places=2)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft'
+    )
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Draft')
+    budget = models.DecimalField(max_digits=12, decimal_places=2)
 
     start_date = models.DateField()
     end_date = models.DateField()
 
-    # Optional content fields
+    # Optional fields
     caption = models.TextField(blank=True, null=True)
     likes = models.IntegerField(default=0)
     comments = models.IntegerField(default=0)
@@ -38,4 +41,4 @@ class Campaign(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.title
